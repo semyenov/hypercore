@@ -1,44 +1,52 @@
-// quickbit-native.d.ts
+// types/quickbit-native.d.ts
 
 declare module "quickbit" {
-  export interface Field {
+  export interface QuickbitField {
     byteLength: number;
   }
 
-  export interface Index {
+  export class QuickbitIndex {
     byteLength: number;
     handle: number;
     skipFirst(value: boolean, position?: number): number;
     skipLast(value: boolean, position?: number): number;
   }
 
-  export class DenseIndex extends Index {
-    constructor(field: Field);
+  export class DenseIndex extends QuickbitIndex {
+    constructor(field: QuickbitField);
     update(bit: number): boolean;
   }
 
-  export class SparseIndex extends Index {
+  export class SparseIndex extends QuickbitIndex {
     constructor(chunks: any[], byteLength?: number);
     update(bit: number): boolean;
   }
 
-  export function get(field: Field, bit: number): boolean;
-  export function set(field: Field, bit: number, value?: boolean): boolean;
-  export function fill(
-    field: Field,
-    value: boolean,
-    start?: number,
-    end?: number
-  ): Field;
-  export function clear(field: Field, ...chunks: any[]): void;
-  export function findFirst(
-    field: Field,
-    value: boolean,
-    position?: number
-  ): number;
-  export function findLast(
-    field: Field,
-    value: boolean,
-    position?: number
-  ): number;
+  namespace quickbit {
+    export function get(field: QuickbitField, bit: number): boolean;
+    export function set(
+      field: QuickbitField,
+      bit: number,
+      value?: boolean
+    ): boolean;
+    export function fill(
+      field: QuickbitField,
+      value: boolean,
+      start?: number,
+      end?: number
+    ): QuickbitField;
+    export function clear(field: QuickbitField, ...chunks: any[]): void;
+    export function findFirst(
+      field: QuickbitField,
+      value: boolean,
+      position?: number
+    ): number;
+    export function findLast(
+      field: QuickbitField,
+      value: boolean,
+      position?: number
+    ): number;
+  }
+
+  export default quickbit;
 }

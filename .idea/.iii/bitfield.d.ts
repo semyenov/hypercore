@@ -1,6 +1,7 @@
-declare module "bitfield" {
-  import { BigSparseArray } from "big-sparse-array";
-  import { quickbit } from "./compat";
+declare module "hypercore/lib/bitfield" {
+  import RandomAccessStorage from "random-access-storage";
+  import BigSparseArray from "big-sparse-array";
+  import { QuickbitIndex } from "quickbit";
 
   export class BitfieldPage {
     dirty: boolean;
@@ -10,7 +11,7 @@ declare module "bitfield" {
     segment: BitfieldSegment;
 
     constructor(index: number, segment: BitfieldSegment);
-    get tree(): quickbit.Index;
+    get tree(): QuickbitIndex;
     get(index: number): boolean;
     set(index: number, val: boolean): void;
     setRange(start: number, length: number, val: boolean): void;
@@ -22,7 +23,7 @@ declare module "bitfield" {
   export class BitfieldSegment {
     index: number;
     offset: number;
-    tree: quickbit.Index;
+    tree: QuickbitIndex;
     pages: Array<BitfieldPage | null>;
 
     constructor(index: number, bitfield: Uint32Array);
@@ -35,12 +36,12 @@ declare module "bitfield" {
 
   export default class Bitfield {
     unflushed: BitfieldPage[];
-    storage: any;
+    storage: RandomAccessStorage;
     resumed: boolean;
     _pages: BigSparseArray<BitfieldPage>;
     _segments: BigSparseArray<BitfieldSegment>;
 
-    constructor(storage: any, buffer: Uint8Array | null);
+    constructor(storage: RandomAccessStorage, buffer: Uint8Array | null);
     toBuffer(length: number): Uint8Array;
     getBitfield(index: number): BitfieldPage | null;
     get(index: number): boolean;
@@ -62,7 +63,10 @@ declare module "bitfield" {
     clear(): Promise<void>;
     close(): Promise<void>;
     flush(): Promise<void>;
-    static open(storage: any, tree?: quickbit.Index | null): Promise<Bitfield>;
+    static open(
+      storage: RandomAccessStorage,
+      tree?: QuickbitIndex | null
+    ): Promise<Bitfield>;
   }
 
   function clamp(n: number, min: number, max: number): number;

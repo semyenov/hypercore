@@ -1,4 +1,4 @@
-declare module "./lib/block-encryption" {
+declare module "hypercore/lib/block-encryption" {
   import { Buffer } from "buffer";
 
   interface BlockEncryptionOptions {
@@ -20,7 +20,7 @@ declare module "./lib/block-encryption" {
       options?: BlockEncryptionOptions
     );
 
-    encrypt(index: number | bigint, block: Buffer, fork: number | bigint): void;
-    decrypt(index: number | bigint, block: Buffer): void;
+    encrypt(index: number, block: Buffer, fork: number): void;
+    decrypt(index: number, block: Buffer): void;
   }
 }

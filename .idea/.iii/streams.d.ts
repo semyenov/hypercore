@@ -1,16 +1,16 @@
 declare module "./lib/streams" {
-  import Hypercore from "hypercore";
+  import Core from "hypercore/lib/core";
   import { Writable, Readable } from "streamx";
 
   export class ReadStream extends Readable {
-    core: Hypercore;
+    core: Core;
     start: number;
     end: number;
     snapshot: boolean;
     live: boolean;
 
     constructor(
-      core: Hypercore,
+      core: Core,
       opts?: {
         start?: number;
         end?: number;
@@ -21,13 +21,13 @@ declare module "./lib/streams" {
   }
 
   export class WriteStream extends Writable {
-    core: Hypercore;
-    constructor(core: Hypercore);
+    core: Core;
+    constructor(core: Core);
   }
 
   export class ByteStream extends Readable {
     constructor(
-      core: Hypercore,
+      core: Core,
       opts?: { byteOffset?: number; byteLength?: number; prefetch?: number }
     );
   }

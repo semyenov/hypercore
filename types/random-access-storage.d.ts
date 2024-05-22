@@ -1,10 +1,12 @@
-// random-access-storage.d.ts
+// types/random-access-storage.d.ts
 
 declare module "random-access-storage" {
+  import { Buffer } from "buffer";
   import { EventEmitter } from "events";
 
+  type Callback<T> = (err?: Error | null, result?: T) => void;
+
   export default class RandomAccessStorage extends EventEmitter {
-    constructor(opts?: object);
     readonly opened: boolean;
     readonly suspended: boolean;
     readonly closed: boolean;
@@ -16,19 +18,18 @@ declare module "random-access-storage" {
     readonly truncatable: boolean;
     readonly statable: boolean;
 
-    read(
-      offset: number,
-      size: number,
-      cb: (err: Error | null, buf: Buffer) => void
-    ): void;
-    write(offset: number, data: Buffer, cb: (err: Error | null) => void): void;
-    del(offset: number, size: number, cb: (err: Error | null) => void): void;
-    truncate(offset: number, cb: (err: Error | null) => void): void;
-    stat(cb: (err: Error | null, stats: any) => void): void;
-    open(cb: (err: Error | null) => void): void;
-    suspend(cb: (err: Error | null) => void): void;
-    close(cb: (err: Error | null) => void): void;
-    unlink(cb: (err: Error | null) => void): void;
+    constructor(opts?: object);
+
+    read(offset: number, size: number, callback: Callback<Buffer>): void;
+    del(offset: number, size: number, callback: Callback<void>): void;
+    open(callback: Callback<void>): void;
+    suspend(callback: Callback<void>): void;
+    close(callback: Callback<void>): void;
+    unlink(callback: Callback<void>): void;
+    write(offset: number, data: Buffer, callback: Callback<void>): void;
+    read(offset: number, size: number, callback: Callback<Buffer>): void;
+    stat(callback: Callback<{ size: number }>): void;
+    truncate(size: number, callback: Callback<void>): void;
 
     private run(req: Request, writing: boolean): void;
   }
@@ -40,7 +41,7 @@ declare module "random-access-storage" {
       offset: number,
       size: number,
       data: Buffer | null,
-      cb: (err: Error | null, val: any) => void
+      cb: Callback<any>
     );
     readonly type: number;
     readonly offset: number;

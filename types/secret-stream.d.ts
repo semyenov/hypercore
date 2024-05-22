@@ -1,6 +1,8 @@
+// types/secret-stream.d.ts
+
 declare module "@hyperswarm/secret-stream" {
-  import { Duplex } from "streamx";
   import { Buffer } from "buffer";
+  import { Duplex } from "streamx";
   import { KeyPair } from "hypercore-crypto";
 
   export interface HandshakeResult {

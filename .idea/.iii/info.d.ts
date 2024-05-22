@@ -1,4 +1,4 @@
-declare module "info" {
+declare module "hypercore/lib/info" {
   export interface InfoOptions {
     key?: string;
     discoveryKey?: string;
@@ -7,7 +7,7 @@ declare module "info" {
     byteLength?: number;
     fork?: number;
     padding?: number;
-    storage?: any;
+    storage?: StorageInfo | null;
   }
 
   export interface StorageInfo {
