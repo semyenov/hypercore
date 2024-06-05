@@ -36,7 +36,7 @@ class MerkleTree {
     roots: m.CompactNode[],
     fork: number,
     signature: Buffer | null,
-    prologue: m.Prologue | null
+    prologue: m.Prologue | null,
   );
 
   addNode(node: m.CompactNode): void;
@@ -51,7 +51,7 @@ class MerkleTree {
   getNeededNodes(
     length: number,
     start: number,
-    end: number
+    end: number,
   ): Promise<m.CompactNode[]>;
   upgradeable(length: number): Promise<boolean>;
   blankNode(index: number): m.CompactNode;
@@ -81,7 +81,7 @@ class MerkleTree {
       fork?: number;
       signature?: Buffer;
       prologue?: m.Prologue;
-    }
+    },
   ): Promise<MerkleTree>;
 }
 
@@ -142,7 +142,7 @@ export class ByteSeeker {
   constructor(
     tree: MerkleTreeBatch | MerkleTree,
     bytes: number,
-    padding?: number
+    padding?: number,
   );
   tree: MerkleTreeBatch | MerkleTree;
   bytes: number;

@@ -1,16 +1,10 @@
-import * as m from "./messages";
-import Peer from "./peer";
 import { ByteSeeker } from "./merkle-tree";
 import Core from "./core";
+import Peer from "./peer";
 import Protomux from "protomux";
 
-declare const DEFAULT_MAX_INFLIGHT: [16, 512];
+declare const DEFAULT_MAX_INFLIGHT: [number, number];
 declare const NOT_DOWNLOADING_SLACK: number;
-declare const PRIORITY: {
-  NORMAL: 0;
-  HIGH: 1;
-  VERY_HIGH: 2;
-};
 
 declare interface AttachableRequest<T extends Attachable = Attachable> {
   context: T;
@@ -24,9 +18,9 @@ declare interface AttachableRequest<T extends Attachable = Attachable> {
   timeout: NodeJS.Timeout | null;
 }
 
-class Attachable<T = any> {
+declare class Attachable<T = any> {
   resolved: boolean;
-  refs: AttachableRequest[];
+  refs: Attachable[];
 
   attach(session: AttachableRequest[]): AttachableRequest;
   detach(r: AttachableRequest, err?: any): boolean;
@@ -36,7 +30,7 @@ class Attachable<T = any> {
   setTimeout(r: AttachableRequest, ms: number): void;
 }
 
-class BlockRequest extends Attachable {
+declare class BlockRequest extends Attachable {
   index: number;
   priority: number;
   inflight: AttachableRequest[];
@@ -46,7 +40,7 @@ class BlockRequest extends Attachable {
   constructor(tracker: InflightTracker, index: number, priority: number);
 }
 
-class RangeRequest extends Attachable {
+declare class RangeRequest extends Attachable {
   start: number;
   end: number;
   linear: boolean;
@@ -62,20 +56,20 @@ class RangeRequest extends Attachable {
     end: number,
     linear: boolean,
     ifAvailable: boolean,
-    blocks: any[]
+    blocks: any[],
   );
 }
 
-class UpgradeRequest extends Attachable {
+declare class UpgradeRequest extends Attachable {
   fork: number;
   length: number;
-  inflight: Attachable[];
+  inflight: AttachableRequest[];
   replicator: Replicator;
 
   constructor(replicator: Replicator, fork: number, length: number);
 }
 
-class SeekRequest extends Attachable {
+declare class SeekRequest extends Attachable {
   seeker: ByteSeeker;
   inflight: AttachableRequest[];
   seeks: SeekRequest[];
@@ -83,7 +77,7 @@ class SeekRequest extends Attachable {
   constructor(seeks: SeekRequest[], seeker: ByteSeeker);
 }
 
-class InflightTracker {
+declare class InflightTracker {
   constructor();
 
   get idle(): boolean;
@@ -94,7 +88,7 @@ class InflightTracker {
   remove(id: number): void;
 }
 
-class BlockTracker {
+declare class BlockTracker {
   constructor();
 
   [Symbol.iterator](): IterableIterator<BlockRequest>;
@@ -120,7 +114,7 @@ declare class Replicator {
       onpeerupdate?: (added: boolean, peer: Peer) => void;
       onupload?: () => void;
       oninvalid?: () => void;
-    }
+    },
   );
 
   tracer: any;
@@ -152,8 +146,14 @@ declare class Replicator {
   onconflict(from: any): Promise<void>;
   applyPendingReorg(): Promise<boolean>;
   addUpgrade(session: AttachableRequest[]): AttachableRequest<UpgradeRequest>;
-  addBlock(session: AttachableRequest[], index: number): AttachableRequest<BlockRequest>;
-  addSeek(session: AttachableRequest[], seeker: ByteSeeker): AttachableRequest<SeekRequest>;
+  addBlock(
+    session: AttachableRequest[],
+    index: number,
+  ): AttachableRequest<BlockRequest>;
+  addSeek(
+    session: AttachableRequest[],
+    seeker: ByteSeeker,
+  ): AttachableRequest<SeekRequest>;
   addRange(
     session: AttachableRequest[],
     options?: {
@@ -163,7 +163,7 @@ declare class Replicator {
       blocks?: any[] | null;
       linear?: boolean;
       ifAvailable?: boolean;
-    }
+    },
   ): AttachableRequest<RangeRequest>;
   cancel(ref: AttachableRequest): void;
   clearRequests(session: AttachableRequest[], err?: any): void;
