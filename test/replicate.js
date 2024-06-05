@@ -5,6 +5,7 @@ const NoiseSecretStream = require('@hyperswarm/secret-stream')
 const { create, replicate, unreplicate, eventFlush } = require('./helpers')
 const { makeStreamPair } = require('./helpers/networking.js')
 const Hypercore = require('../')
+const detectTypes =  require('./helpers/tst.js')
 
 test('basic replication', async function (t) {
   const a = await create()
@@ -20,6 +21,9 @@ test('basic replication', async function (t) {
 
   const r = b.download({ start: 0, end: a.length })
 
+  console.log((await r.req).session)
+  detectTypes((await r.req), 3)
+  
   await r.done()
 
   t.is(d, 5)
@@ -32,6 +36,7 @@ test('basic downloading is set immediately after ready', function (t) {
 
   a.on('ready', function () {
     t.ok(a.replicator.downloading)
+    // detectTypes(a.replicator, 6)
   })
 
   const b = new Hypercore(RAM, { active: false })
@@ -576,6 +581,8 @@ test('destroying a stream and re-replicating works', async function (t) {
   s1.pipe(s2).pipe(s1)
 
   const blocks = await Promise.all(all)
+
+  detectTypes(blocks, 4)
 
   t.is(blocks.length, 33, 'downloaded 33 blocks')
 

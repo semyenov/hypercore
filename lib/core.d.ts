@@ -12,15 +12,15 @@ import {
 } from "hypercore-errors";
 import Hypertrace from "hypertrace";
 import RandomAccessStorage from "random-access-storage";
-import Oplog from "hypercore/lib/oplog";
-import BigHeader from "hypercore/lib/big-header";
-import MerkleTree from "hypercore/lib/merkle-tree";
-import BlockStore from "hypercore/lib/block-store";
-import Bitfield from "hypercore/lib/bitfield";
-import RemoteBitfield from "hypercore/lib/remote-bitfield";
-import Info, { StorageInfo } from "hypercore/lib/info";
-import Verifier from "hypercore/lib/verifier";
-import { OplogHeader, Manifest } from "hypercore/lib/messages";
+import Oplog from "./oplog";
+import BigHeader from "./big-header";
+import MerkleTree from "./merkle-tree";
+import BlockStore from "./block-store";
+import Bitfield from "./bitfield";
+import RemoteBitfield from "./remote-bitfield";
+import Info, { StorageInfo } from "./info";
+import Verifier from "./verifier";
+import * as m from "./messages";
 
 export = class Core {
   tracer: Hypertrace | null;
@@ -32,7 +32,7 @@ export = class Core {
   ) => void;
   onconflict: (proof: Data) => Promise<void>;
   preupdate: ((batch: MerkleTreeBatch, key: Buffer) => Promise<void>) | null;
-  header: OplogHeader;
+  header: m.OplogHeader;
   compat: boolean;
   crypto: typeof hypercoreCrypto;
   oplog: Oplog;
@@ -47,7 +47,7 @@ export = class Core {
   skipBitfield: RemoteBitfield | null;
 
   constructor(
-    header: OplogHeader,
+    header: m.OplogHeader,
     compat: boolean,
     crypto: typeof hypercoreCrypto,
     oplog: Oplog,
@@ -119,7 +119,7 @@ export = class Core {
 };
 
 function updateContig(
-  header: OplogHeader,
+  header: m.OplogHeader,
   upd: Bitfield,
   bitfield: Bitfield
 ): number;
@@ -141,7 +141,7 @@ function closeAll(...storages: any[]): Promise<void>;
 function flushHeader(
   oplog: Oplog,
   bigHeader: BigHeader,
-  header: OplogHeader
+  header: m.OplogHeader
 ): Promise<void>;
 
 function noop(): void;

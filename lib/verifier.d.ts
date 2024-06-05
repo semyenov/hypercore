@@ -56,7 +56,7 @@ interface VerifierOptions {
   legacy?: boolean;
 }
 
-export = class Verifier {
+declare class Verifier {
   manifestHash: Buffer;
   compat: boolean;
   version: number;
@@ -87,4 +87,6 @@ export = class Verifier {
     keyPair: KeyPair,
     opts?: VerifierOptions
   ): Signature;
-};
+}
+
+export = Verifier;

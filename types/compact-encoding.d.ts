@@ -9,7 +9,7 @@ declare module "compact-encoding" {
     buffer?: Buffer | null
   ): State;
 
-  export const raw: any;
+  export const raw: Codec;
   export const uint: Codec<number>;
   export const uint8: Codec<number>;
   export const uint16: Codec<number>;
@@ -28,11 +28,11 @@ declare module "compact-encoding" {
   export const int48: Codec<number>;
   export const int56: Codec<number>;
   export const int64: Codec<number>;
-  export const biguint64: Codec<bigint>;
-  export const bigint64: Codec<bigint>;
-  export const biguint: Codec<bigint>;
-  export const bigint: Codec<bigint>;
-  export const lexint: any;
+  export const biguint64: Codec<number>;
+  export const bigint64: Codec<number>;
+  export const biguint: Codec<number>;
+  export const bigint: Codec<number>;
+  export const lexint: Codec<number>;
   export const float32: Codec<number>;
   export const float64: Codec<number>;
   export const buffer: Codec<Buffer | null>;
@@ -61,8 +61,8 @@ declare module "compact-encoding" {
   export const fixed64: Codec<Buffer>;
   export const array: <T>(enc: Codec<T>) => Codec<T[]>;
   export const frame: <T>(enc: Codec<T>) => Codec<T>;
-  export const json: Codec<any>;
-  export const ndjson: Codec<any>;
+  export const json: Codec<string, any>;
+  export const ndjson: Codec<string, any>;
   export const none: Codec<null>;
   export const any: Codec<any>;
   export function from(enc: any): Codec<any>;
@@ -73,10 +73,10 @@ declare module "compact-encoding" {
     start: number;
     end: number;
     buffer: Buffer | null;
-    cache: any;
+    cache?: any;
   }
 
-  export interface Codec<T, O = T> {
+  export interface Codec<T = any, O = T> {
     preencode(state: State, value: T): void;
     encode(state: State, value: T): void;
     decode(state: State): O;

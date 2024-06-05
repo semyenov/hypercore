@@ -6,7 +6,7 @@ declare module "b4a" {
    *
    * This will also return `true` when passed a `Uint8Array`.
    */
-  export function isBuffer(value: any): value is Buffer | Uint8Array;
+  export function isBuffer(value: any): value is Buffer;
   /**
    * See https://nodejs.org/api/buffer.html#static-method-bufferisencodingencoding
    */
@@ -18,15 +18,15 @@ declare module "b4a" {
     size: number,
     fill?: string | Uint8Array | number,
     encoding?: BufferEncoding
-  ): Buffer | Uint8Array;
+  ): Buffer;
   /**
    * See https://nodejs.org/api/buffer.html#static-method-bufferallocunsafesize
    */
-  export function allocUnsafe(size: number): Buffer | Uint8Array;
+  export function allocUnsafe(size: number): Buffer;
   /**
    * See https://nodejs.org/api/buffer.html#static-method-bufferallocunsafeslowsize
    */
-  export function allocUnsafeSlow(size: number): Buffer | Uint8Array;
+  export function allocUnsafeSlow(size: number): Buffer;
   /**
    * See https://nodejs.org/api/buffer.html#static-method-bufferbytelengthstring-encoding
    */
@@ -44,7 +44,7 @@ declare module "b4a" {
   export function concat(
     list: readonly Uint8Array[],
     totalLength?: number
-  ): Buffer | Uint8Array;
+  ): Buffer;
   /**
    * See https://nodejs.org/api/buffer.html#bufcopytarget-targetstart-sourcestart-sourceend
    */
@@ -68,7 +68,7 @@ declare module "b4a" {
     offset?: number,
     end?: number,
     encoding?: BufferEncoding
-  ): Buffer | Uint8Array;
+  ): Buffer;
   /**
    * See https://nodejs.org/api/buffer.html#static-method-bufferfromarraybuffer-byteoffset-length
    */
@@ -76,20 +76,18 @@ declare module "b4a" {
     arrayBuffer: WithImplicitCoercion<ArrayBuffer | SharedArrayBuffer>,
     byteOffset?: number,
     length?: number
-  ): Buffer | Uint8Array;
+  ): Buffer;
   /**
    * See https://nodejs.org/api/buffer.html#static-method-bufferfrombuffer
    */
-  export function from(
-    data: Uint8Array | readonly number[]
-  ): Buffer | Uint8Array;
+  export function from(data: Uint8Array | readonly number[]): Buffer;
   /**
    * See https://nodejs.org/api/buffer.html#static-method-bufferfromarray
    */
   // tslint:disable-next-line unified-signatures
   export function from(
     data: WithImplicitCoercion<Uint8Array | readonly number[] | string>
-  ): Buffer | Uint8Array;
+  ): Buffer;
   /**
    * See https://nodejs.org/api/buffer.html#static-method-bufferfromstring-encoding
    */
@@ -98,7 +96,7 @@ declare module "b4a" {
       | WithImplicitCoercion<string>
       | { [Symbol.toPrimitive](hint: "string"): string },
     encoding?: BufferEncoding
-  ): Buffer | Uint8Array;
+  ): Buffer;
   /**
    * See https://nodejs.org/api/buffer.html#bufincludesvalue-byteoffset-encoding
    * @param buffer
@@ -133,15 +131,15 @@ declare module "b4a" {
   /**
    * See https://nodejs.org/api/buffer.html#bufswap16
    */
-  export function swap16(buffer: Uint8Array): Buffer | Uint8Array;
+  export function swap16(buffer: Uint8Array): Buffer;
   /**
    * See https://nodejs.org/api/buffer.html#bufswap32
    */
-  export function swap32(buffer: Uint8Array): Buffer | Uint8Array;
+  export function swap32(buffer: Uint8Array): Buffer;
   /**
    * See https://nodejs.org/api/buffer.html#bufswap64
    */
-  export function swap64(buffer: Uint8Array): Buffer | Uint8Array;
+  export function swap64(buffer: Uint8Array): Buffer;
   /**
    * Convert a buffer to its canonical representation. In Node.js, the canonical representation is a `Buffer`.
    * In the browser, the canonical representation is a `Uint8Array`.

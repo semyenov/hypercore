@@ -1,5 +1,3 @@
-import auditCore from './lib/audit'
-
 const { EventEmitter } = require('events')
 const RAF = require('random-access-file')
 const isOptions = require('is-options')

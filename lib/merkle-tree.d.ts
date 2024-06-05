@@ -5,78 +5,70 @@ import { FlatTreeIterator } from "flat-tree";
 import RandomAccessStorage from "random-access-storage";
 import hypercoreCrypto from "hypercore-crypto";
 import Xache from "xache";
-import {
-  CompactNode,
-  Prologue,
-  Data,
-  DataBlock,
-  DataHash,
-  DataSeek,
-  DataUpgrade,
-} from "hypercore/lib/messages";
+import * as m from "./messages";
 
 export class NodeQueue {
-  constructor(nodes: CompactNode[], extra?: CompactNode | null);
+  constructor(nodes: m.CompactNode[], extra?: m.CompactNode | null);
   i: number;
-  nodes: CompactNode[];
-  extra: CompactNode | null;
+  nodes: m.CompactNode[];
+  extra: m.CompactNode | null;
   length: number;
-  shift(index: number): CompactNode;
+  shift(index: number): m.CompactNode;
 }
 
-export = class MerkleTree {
+class MerkleTree {
   fork: number;
-  roots: CompactNode[];
+  roots: m.CompactNode[];
   length: number;
   byteLength: number;
   signature: Buffer | null;
-  prologue: Prologue | null;
+  prologue: m.Prologue | null;
   storage: RandomAccessStorage;
-  unflushed: Map<number, CompactNode>;
-  flushing: Map<number, CompactNode> | null;
+  unflushed: Map<number, m.CompactNode>;
+  flushing: Map<number, m.CompactNode> | null;
   truncated: boolean;
   truncateTo: number;
   crypto: typeof hypercoreCrypto;
-  cache: Xache<number, CompactNode>;
+  cache: Xache<number, m.CompactNode>;
 
   constructor(
     storage: RandomAccessStorage,
-    roots: CompactNode[],
+    roots: m.CompactNode[],
     fork: number,
     signature: Buffer | null,
-    prologue: Prologue | null
+    prologue: m.Prologue | null
   );
 
-  addNode(node: CompactNode): void;
+  addNode(node: m.CompactNode): void;
   batch(): MerkleTreeBatch;
   restoreBatch(length: number): Promise<MerkleTreeBatch>;
-  seek(bytes: number, padding: number): ByteSeeker;
+  seek(bytes: number, padding?: number): ByteSeeker;
   hash(): Buffer;
   signable(namespace: Buffer): Buffer;
-  getRoots(length: number): Promise<CompactNode[]>;
-  setPrologue(prologue: Prologue): void;
-  addNodes(nodes: CompactNode[]): void;
+  getRoots(length: number): Promise<m.CompactNode[]>;
+  setPrologue(prologue: m.Prologue): void;
+  addNodes(nodes: m.CompactNode[]): void;
   getNeededNodes(
     length: number,
     start: number,
     end: number
-  ): Promise<CompactNode[]>;
+  ): Promise<m.CompactNode[]>;
   upgradeable(length: number): Promise<boolean>;
-  blankNode(index: number): CompactNode;
-  get(index: number, error?: boolean): Promise<CompactNode | null>;
+  blankNode(index: number): m.CompactNode;
+  get(index: number, error?: boolean): Promise<m.CompactNode | null>;
   flush(): Promise<void>;
   clear(): Promise<void>;
   close(): Promise<void>;
   truncate(length: number, fork?: number): Promise<MerkleTreeBatch>;
-  reorg(proof: Data): Promise<ReorgBatch>;
-  verifyFullyRemote(proof: Data): MerkleTreeBatch;
-  verify(proof: Data): Promise<MerkleTreeBatch>;
+  reorg(proof: m.Data): Promise<ReorgBatch>;
+  verifyFullyRemote(proof: m.Data): MerkleTreeBatch;
+  verify(proof: m.Data): Promise<MerkleTreeBatch>;
   proof(options: {
-    block?: DataBlock;
-    hash?: DataHash;
-    seek?: DataSeek;
-    upgrade?: DataUpgrade;
-  }): Data;
+    block?: m.RequestBlock;
+    hash?: m.RequestHash;
+    seek?: m.RequestSeek;
+    upgrade?: m.RequestUpgrade;
+  }): Promise<m.Data>;
   missingNodes(index: number): Promise<number>;
   nodes(index: number): Promise<number>;
   byteRange(index: number): Promise<[number, number]>;
@@ -88,10 +80,10 @@ export = class MerkleTree {
       length?: number;
       fork?: number;
       signature?: Buffer;
-      prologue?: Prologue;
+      prologue?: m.Prologue;
     }
   ): Promise<MerkleTree>;
-};
+}
 
 export class MerkleTreeBatch extends MerkleTree {
   ancestors: number;
@@ -99,8 +91,8 @@ export class MerkleTreeBatch extends MerkleTree {
   fork: number;
   hashCached: Buffer | null;
   length: number;
-  nodes: CompactNode[];
-  roots: CompactNode[];
+  nodes: m.CompactNode[];
+  roots: m.CompactNode[];
   signature: Buffer | null;
   tree: MerkleTree;
   treeFork: number;
@@ -109,22 +101,22 @@ export class MerkleTreeBatch extends MerkleTree {
 
   constructor(tree: MerkleTree);
 
-  checkout(length: number, additionalRoots?: CompactNode[]): void;
+  checkout(length: number, additionalRoots?: m.CompactNode[]): void;
   prune(length: number): void;
   clone(): MerkleTreeBatch;
   hash(): Buffer;
   signable(manifestHash: Buffer): Buffer;
   signableCompat(noHeader: boolean): Buffer;
-  get(index: number, error: boolean): CompactNode | null;
+  get(index: number, error: boolean): m.CompactNode | null;
   proof(options: {
-    block?: DataBlock;
-    hash?: DataHash;
-    seek?: DataSeek;
-    upgrade?: DataUpgrade;
-  }): Data;
-  verifyUpgrade(proof: Data): boolean;
+    block?: m.DataBlock;
+    hash?: m.DataHash;
+    seek?: m.DataSeek;
+    upgrade?: m.DataUpgrade;
+  }): m.Data;
+  verifyUpgrade(proof: m.Data): boolean;
   append(buf: Buffer): void;
-  appendRoot(node: CompactNode, ite: FlatTreeIterator): void;
+  appendRoot(node: m.CompactNode, ite: FlatTreeIterator): void;
   commitable(): boolean;
   commit(): void;
   seek(bytes: number, padding: number): ByteSeeker;
@@ -133,7 +125,7 @@ export class MerkleTreeBatch extends MerkleTree {
 }
 
 export class ReorgBatch extends MerkleTreeBatch {
-  diff: CompactNode | null;
+  diff: m.CompactNode | null;
   want: {
     nodes: number;
     start: number;
@@ -143,7 +135,7 @@ export class ReorgBatch extends MerkleTreeBatch {
   constructor(tree: MerkleTree);
 
   get finished(): boolean;
-  update(proof: Data): Promise<boolean>;
+  update(proof: m.Data): Promise<boolean>;
 }
 
 export class ByteSeeker {
@@ -160,3 +152,5 @@ export class ByteSeeker {
 
   update(): Promise<[number, number] | null>;
 }
+
+export = MerkleTree;

@@ -11,7 +11,7 @@ declare module "fast-fifo" {
     isEmpty(): boolean;
   }
 
-  export default class FastFIFO<T> {
+  export = class FastFIFO<T> {
     constructor(hwm?: number);
     hwm: number;
     length: number;
@@ -20,5 +20,5 @@ declare module "fast-fifo" {
     push(val: T): void;
     shift(): T | undefined;
     isEmpty(): boolean;
-  }
+  };
 }

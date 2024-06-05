@@ -60,8 +60,18 @@ declare module "@hyperswarm/secret-stream" {
     readonly reverse: ReversePassThrough;
   }
 
-  export default class NoiseSecretStream extends Duplex {
-    constructor(isInitiator: boolean, rawStream: Duplex, opts?: StreamOptions);
+  export = class NoiseSecretStream extends Duplex {
+    readonly publicKey: Buffer | null;
+    readonly remotePublicKey: Buffer | null;
+    readonly handshakeHash: Buffer | null;
+    readonly connected: boolean;
+    readonly isInitiator: boolean;
+    readonly keepAlive: number;
+    readonly timeout: number;
+    readonly userData: any;
+    readonly rawStream: Duplex;
+
+    constructor(isInitiator: boolean, rawStream?: Duplex, opts?: StreamOptions);
 
     static keyPair(seed?: Buffer): KeyPair;
     static id(handshakeHash: Buffer, isInitiator: boolean, id?: Buffer): Buffer;
@@ -72,16 +82,7 @@ declare module "@hyperswarm/secret-stream" {
     flush(): Promise<boolean>;
 
     alloc(len: number): Buffer;
-
-    readonly publicKey: Buffer | null;
-    readonly remotePublicKey: Buffer | null;
-    readonly handshakeHash: Buffer | null;
-    readonly connected: boolean;
-    readonly isInitiator: boolean;
-    readonly keepAlive: number;
-    readonly timeout: number;
-    readonly userData: any;
-  }
+  };
 
   export function writeUint24le(n: number, buf: Buffer): void;
   export function streamId(

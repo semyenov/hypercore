@@ -50,6 +50,11 @@ export interface RequestBlock {
   nodes: number;
 }
 
+export interface RequestHash {
+  index: number;
+  nodes: number;
+}
+
 export interface RequestSeek {
   bytes: number;
   padding: number;
@@ -64,7 +69,7 @@ export interface Request {
   id: number;
   fork: number;
   block?: RequestBlock;
-  hash?: RequestBlock;
+  hash?: RequestHash;
   seek?: RequestSeek;
   upgrade?: RequestUpgrade;
   manifest: boolean;

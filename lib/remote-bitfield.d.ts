@@ -1,5 +1,6 @@
 import BigSparseArray from "big-sparse-array";
 import MerkleTree from "hypercore/lib/merkle-tree";
+import { Bitfield } from "./messages";
 
 class RemoteBitfieldPage {
   index: number;
@@ -44,7 +45,7 @@ export = class RemoteBitfield {
 
   constructor();
 
-  getBitfield(index: number): Uint32Array | null;
+  getBitfield(index: number): Bitfield | null;
   get(index: number): boolean;
   set(index: number, val: boolean): void;
   setRange(start: number, length: number, val: boolean): void;

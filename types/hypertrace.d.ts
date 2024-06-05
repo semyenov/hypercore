@@ -1,7 +1,7 @@
 // types/hypertrace.d.ts
 
 declare module "hypertrace" {
-  export default class Hypertrace {
+  class Hypertrace {
     enabled: boolean;
     ctx: any;
     className: string;
@@ -16,4 +16,6 @@ declare module "hypertrace" {
   export function setTraceFunction(fn: (...args: any[]) => void): void;
   export function clearTraceFunction(): void;
   export function createTracer(ctx: any, opts?: Object): Hypertrace;
+
+  export = Hypertrace;
 }

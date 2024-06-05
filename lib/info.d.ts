@@ -18,7 +18,7 @@ export interface StorageInfo {
   bitfield: number;
 }
 
-export = class Info {
+declare class Info {
   constructor(opts?: InfoOptions);
 
   key: string;
@@ -33,4 +33,6 @@ export = class Info {
   static from(session: any, opts?: InfoOptions): Promise<Info>;
   static storage(session: any): Promise<StorageInfo | null>;
   static bytesUsed(file: any): Promise<number>;
-};
+}
+
+export = Info;

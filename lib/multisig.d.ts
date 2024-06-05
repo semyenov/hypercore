@@ -1,35 +1,30 @@
 // lib/multisig.d.ts
 
 import { Buffer } from "buffer";
-import {
-  CompactNode,
-  MultisigInput,
-  MultiSignature,
-  MultiSignatureV0,
-} from "hypercore/lib/messages";
-import MerkleTree from "hypercore/lib/merkle-tree";
+import * as m from "./messages";
+import MerkleTree from "./merkle-tree";
 
 interface SignatureProof {
   signer: number;
   signature: Buffer;
   patch: number;
-  nodes?: CompactNode[];
+  nodes?: m.CompactNode[];
 }
 
 interface MultiSignatureMessage {
   proofs: SignatureProof[];
-  patch: CompactNode[];
+  patch: m.CompactNode[];
 }
 
 interface UpgradeNodesResult {
-  nodes: CompactNode[];
+  nodes: m.CompactNode[];
 }
 
-export = class Multisig {
-  static assemblev0(inputs: MultisigInput[]): Buffer;
-  static assemble(inputs: MultisigInput[]): Buffer;
-  static inflatev0(data: Buffer): MultiSignatureV0;
-  static inflate(data: Buffer): MultiSignature;
+declare class Multisig {
+  static assemblev0(inputs: m.MultisigInput[]): Buffer;
+  static assemble(inputs: m.MultisigInput[]): Buffer;
+  static inflatev0(data: Buffer): m.MultiSignatureV0;
+  static inflate(data: Buffer): m.MultiSignature;
   static partialSignature(
     tree: MerkleTree,
     signer: number,
@@ -44,13 +39,15 @@ export = class Multisig {
   ): Promise<UpgradeNodesResult>;
 
   static signableLength(lengths: number[], quorum: number): number;
-};
+}
 
 type PartialSignatureResult = {
   signer: number;
   signature: Buffer;
   patch: number;
-  nodes?: CompactNode[];
+  nodes?: m.CompactNode[];
 };
 
 function cmp(a: number, b: number): number;
+
+export = Multisig;

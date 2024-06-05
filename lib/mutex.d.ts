@@ -1,4 +1,4 @@
-export = class Mutex {
+declare class Mutex {
   locked: boolean;
   destroyed: boolean;
 
@@ -7,4 +7,6 @@ export = class Mutex {
   lock(): Promise<void>;
   unlock(): void;
   destroy(err?: Error): Promise<void>;
-};
+}
+
+export = Mutex;
