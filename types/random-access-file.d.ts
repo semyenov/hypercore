@@ -1,4 +1,4 @@
-// random-access-file.d.ts
+// types/random-access-file.d.ts
 
 declare module "random-access-file" {
   import { Readable, Writable } from "stream";

@@ -1,4 +1,5 @@
-// hypercore-id-encoding.d.ts
+// types/hypercore-id-encoding.d.ts
+
 declare module "hypercore-id-encoding" {
   export function encode(key: any): string;
   export function decode(id: Buffer | string): Buffer;

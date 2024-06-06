@@ -8,7 +8,7 @@ declare module "xache" {
     ongc?: (oldest: Map<K, V>) => void;
   }
 
-  export default class MaxCache<K, V> {
+  class MaxCache<K, V> {
     constructor(options: MaxCacheOptions);
 
     [Symbol.iterator](): IterableIterator<[L, V]>;

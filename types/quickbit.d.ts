@@ -1,4 +1,4 @@
-// types/quickbit-native.d.ts
+// types/quickbit.d.ts
 
 declare module "quickbit" {
   export interface QuickbitField {

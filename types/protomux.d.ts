@@ -1,4 +1,4 @@
-// protomux.d.ts
+// types/protomux.d.ts
 
 declare module "protomux" {
   import { Codec, State } from "compact-encoding";

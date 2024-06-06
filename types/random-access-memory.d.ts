@@ -1,4 +1,4 @@
-// random-access-memory.d.ts
+// types/random-access-memory.d.ts
 
 declare module 'random-access-memory' {
   import { Buffer } from 'buffer';

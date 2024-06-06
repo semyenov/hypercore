@@ -1,4 +1,5 @@
-// safety-catch.d.ts
+// types/safety-catch.d.ts
+
 declare module "safety-catch" {
   export function safetyCatch(err: Error | null): void;
   export function isActuallyUncaught(err: Error | null): boolean;

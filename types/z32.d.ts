@@ -16,7 +16,7 @@ declare module "z32" {
   function encode(buf: Buffer | string): string;
   function decode(s: string, out?: Buffer): Buffer;
 
-  export default {
+  export = {
     encode,
     decode,
     ALPHABET,

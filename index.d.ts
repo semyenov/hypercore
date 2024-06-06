@@ -13,6 +13,7 @@ import Core from './lib/core';
 import Peer from './lib/peer';
 import { ReadStream, WriteStream, ByteStream } from './lib/streams';
 import Info, { InfoOptions } from './lib/info';
+import { BlockEncryptionOptions } from './lib/block-encryption';
 import * as hypercoreCrypto from 'hypercore-crypto';
 import type HypercoreBatch from './lib/batch';
 
@@ -30,7 +31,7 @@ declare interface HypercoreOptions {
   createIfMissing?: boolean;
   crypto?: typeof hypercoreCrypto;
   encodeBatch?: (batch: any[]) => Buffer[];
-  encryptionKey?: Buffer;
+  encryptionKey?: Buffer | null;
   force?: boolean;
   from?: Hypercore;
   inflightRange?: [number, number];
@@ -46,7 +47,7 @@ declare interface HypercoreOptions {
   onwait?: (index: number, core: Hypercore) => void;
   onwrite?(index: number, data: Buffer, peer: Peer, cb: () => void): void;
   overwrite?: boolean;
-  preload?: () => Promise<HypercoreOptions>;
+  preload?: () => HypercoreOptions | Promise<HypercoreOptions>;
   rmdir?: boolean;
   secretKey?: Buffer;
   snapshot?: boolean;
@@ -164,9 +165,9 @@ declare class Hypercore extends EventEmitter {
     preappend?: (values: Buffer[]) => Promise<void>;
   }): Promise<{ length: number, byteLength: number }>;
 
-  setEncryptionKey(encryptionKey: Buffer, opts: any): Promise<void>;
+  setEncryptionKey(encryptionKey: Buffer, opts?: Partial<BlockEncryptionOptions>): Promise<void>;
   setKeyPair(keyPair: m.KeyPair): void;
-  close(err?: any): Promise<void>;
+  close(err?: Error): Promise<void>;
   replicate(stream: NoiseSecretStream, opts?: ReplicationOptions): NoiseSecretStream;
   replicate(isInitiator: boolean, opts?: ReplicationOptions): NoiseSecretStream;
 
@@ -184,9 +185,9 @@ declare class Hypercore extends EventEmitter {
   clear(start: number, opts?: { diff?: boolean }): Promise<any>;
   clear(start: number, end?: number, opts?: { diff?: boolean }): Promise<any>;
   purge(): Promise<void>;
-  createReadStream(opts: { start?: number; end?: number }): ReadStream;
-  createWriteStream(opts: any): WriteStream;
-  createByteStream(opts: { byteOffset?: number; byteLength?: number }): ByteStream;
+  createReadStream(opts?: { start?: number; end?: number }): ReadStream;
+  createWriteStream(opts?: any): WriteStream;
+  createByteStream(opts?: { byteOffset?: number; byteLength?: number }): ByteStream;
   download(range?: { start?: number, end?: number, length?: number, blocks?: number[], ifAvailable?: boolean, linear?: boolean }): Download;
   undownload(range?: { start?: number, end?: number, length?: number, blocks?: number[], ifAvailable?: boolean, linear?: boolean }): void;
   cancel(request: any): void;

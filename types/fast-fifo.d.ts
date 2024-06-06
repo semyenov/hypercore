@@ -1,3 +1,5 @@
+// types/fast-fifo.d.ts
+
 declare module "fast-fifo" {
   class FixedFIFO<T> {
     constructor(hwm: number);

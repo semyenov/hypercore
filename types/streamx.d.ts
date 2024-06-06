@@ -1,3 +1,5 @@
+// types/streamx.d.ts
+
 declare module "streamx" {
   import { EventEmitter } from "events";
   import {
@@ -156,12 +158,12 @@ declare module "streamx" {
     (
       | {}
       | {
-          map?: TMapFallback | undefined;
-          mapReadable: MapFunction<TStream, TType, TMapType>;
-        }
+        map?: TMapFallback | undefined;
+        mapReadable: MapFunction<TStream, TType, TMapType>;
+      }
       | {
-          map: MapFunction<TStream, TType, TMapType>;
-        }
+        map: MapFunction<TStream, TType, TMapType>;
+      }
     );
 
   type FromType<TData> = TData extends Readable
@@ -222,8 +224,8 @@ declare module "streamx" {
     TByteType
   > extends StreamOptions<TStream, TByteType> {
     writev?:
-      | ((this: TStream, batch: TMapType[], cb: Callback) => void)
-      | undefined;
+    | ((this: TStream, batch: TMapType[], cb: Callback) => void)
+    | undefined;
     write?: ((this: TStream, data: TMapType, cb: Callback) => void) | undefined;
     final?: ((this: TStream, cb: Callback) => void) | undefined;
     byteLengthWritable?: ByteLengthFunction<TStream, TByteType> | undefined;
@@ -239,12 +241,12 @@ declare module "streamx" {
     (
       | {}
       | {
-          map?: TMapFallback | undefined;
-          mapWritable: MapFunction<TStream, TType, TMapType>;
-        }
+        map?: TMapFallback | undefined;
+        mapWritable: MapFunction<TStream, TType, TMapType>;
+      }
       | {
-          map: MapFunction<TStream, TType, TMapType>;
-        }
+        map: MapFunction<TStream, TType, TMapType>;
+      }
     );
 
   export type WritableEvents<TType> = StreamEvents & {
@@ -304,17 +306,17 @@ declare module "streamx" {
     WritableEvents<TWriteType>;
 
   export class Duplex<
-      TWriteType = any,
-      TReadType = TWriteType,
-      TInternal = TWriteType,
-      TByteType = TWriteType | TReadType,
-      TReadable extends boolean = true,
-      TWritable extends boolean = true,
-      TEvents extends DuplexEvents<TWriteType, TReadType> = DuplexEvents<
-        TWriteType,
-        TReadType
-      >
+    TWriteType = any,
+    TReadType = TWriteType,
+    TInternal = TWriteType,
+    TByteType = TWriteType | TReadType,
+    TReadable extends boolean = true,
+    TWritable extends boolean = true,
+    TEvents extends DuplexEvents<TWriteType, TReadType> = DuplexEvents<
+      TWriteType,
+      TReadType
     >
+  >
     extends Readable<
       TInternal,
       TReadType,
@@ -324,8 +326,7 @@ declare module "streamx" {
       TEvents
     >
     implements
-      Writable<TWriteType, TInternal, TByteType, TReadable, TWritable, TEvents>
-  {
+    Writable<TWriteType, TInternal, TByteType, TReadable, TWritable, TEvents> {
     constructor(
       opts?: DuplexOptions<
         Duplex<
@@ -367,21 +368,21 @@ declare module "streamx" {
     TReadable extends boolean = true,
     TWritable extends boolean = true
   > extends DuplexOptions<
-      TStream,
-      TWriteType,
-      TReadType,
-      TInternal,
-      TByteType,
-      TReadable,
-      TWritable
-    > {
+    TStream,
+    TWriteType,
+    TReadType,
+    TInternal,
+    TByteType,
+    TReadable,
+    TWritable
+  > {
     transform?:
-      | ((
-          this: TStream,
-          data: TWriteType,
-          cb: ResultCallback<TReadType>
-        ) => void)
-      | undefined;
+    | ((
+      this: TStream,
+      data: TWriteType,
+      cb: ResultCallback<TReadType>
+    ) => void)
+    | undefined;
     flush?: ((this: TStream, cb: Callback) => void) | undefined;
   }
 
@@ -434,5 +435,5 @@ declare module "streamx" {
   export function isStream(input: object): input is AnyStream;
   export function isStreamx(input: object): input is Stream;
 
-  export {};
+  export { };
 }

@@ -1,4 +1,4 @@
-// random-array-iterator.d.ts
+// types/random-array-iterator.d.ts
 
 declare module "random-array-iterator" {
   export default class RandomArrayIterator<T = any> {

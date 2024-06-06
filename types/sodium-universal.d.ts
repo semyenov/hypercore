@@ -1,3 +1,5 @@
+// types/sodium-universal.d.ts
+
 declare module "sodium-universal" {
   export interface CryptoGenericHashWrap {
     /**

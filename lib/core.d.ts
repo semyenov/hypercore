@@ -27,7 +27,7 @@ declare class Core {
   header: m.OplogHeader;
   compat: boolean;
   crypto: typeof hypercoreCrypto;
-  oplog: Oplog;
+  oplog: Oplog<m.OplogHeader, m.OplogEntry>;
   bigHeader: BigHeader;
   tree: MerkleTree;
   blocks: BlockStore;
@@ -43,7 +43,7 @@ declare class Core {
     header: m.OplogHeader,
     compat: boolean,
     crypto: typeof hypercoreCrypto,
-    oplog: Oplog,
+    oplog: Oplog<m.OplogHeader, m.OplogEntry>,
     bigHeader: BigHeader,
     tree: MerkleTree,
     blocks: BlockStore,
