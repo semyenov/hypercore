@@ -51,7 +51,7 @@ class RangeRequest extends Attachable {
   end: number;
   linear: boolean;
   ifAvailable: boolean;
-  blocks: any[];
+  blocks: number[];
   ranges: RangeRequest[];
   userStart: number;
   userEnd: number;
@@ -62,7 +62,7 @@ class RangeRequest extends Attachable {
     end: number,
     linear: boolean,
     ifAvailable: boolean,
-    blocks: any[]
+    blocks: number[]
   );
 }
 
@@ -123,6 +123,17 @@ declare class Replicator {
     }
   );
 
+  on(event: 'download', listener: (index: number) => void): this;
+  on(event: 'upload', listener: (index: number) => void): this;
+  on(event: 'close', listener: () => void): this;
+  on(event: 'error', listener: (err: Error) => void): this;
+  on(event: 'peer-add', listener: (peer: any) => void): this;
+  on(event: 'peer-remove', listener: (peer: any) => void): this;
+  on(event: 'update', listener: () => void): this;
+  on(event: 'ready', listener: () => void): this;
+  on(event: 'append', listener: () => void): this;
+  on(event: 'verification-error', listener: (err: Error) => void): this;
+
   tracer: any;
   key: Buffer;
   discoveryKey: Buffer;
@@ -160,7 +171,7 @@ declare class Replicator {
       start?: number;
       end?: number;
       length?: number;
-      blocks?: any[] | null;
+      blocks?: number[] | null;
       linear?: boolean;
       ifAvailable?: boolean;
     }

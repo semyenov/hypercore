@@ -16,7 +16,7 @@ export class NodeQueue {
   shift(index: number): m.CompactNode;
 }
 
-class MerkleTree {
+declare class MerkleTree {
   fork: number;
   roots: m.CompactNode[];
   length: number;
@@ -124,7 +124,7 @@ export class MerkleTreeBatch extends MerkleTree {
   byteOffset(index: number): Promise<number>;
 }
 
-export class ReorgBatch extends MerkleTreeBatch {
+declare class ReorgBatch extends MerkleTreeBatch {
   diff: m.CompactNode | null;
   want: {
     nodes: number;
@@ -138,7 +138,7 @@ export class ReorgBatch extends MerkleTreeBatch {
   update(proof: m.Data): Promise<boolean>;
 }
 
-export class ByteSeeker {
+declare class ByteSeeker {
   constructor(
     tree: MerkleTreeBatch | MerkleTree,
     bytes: number,

@@ -2,39 +2,39 @@ import { Codec, State } from "compact-encoding";
 import * as m from "hypercore/lib/messages";
 import RandomAccessStorage from "random-access-storage";
 
-type OplogOptions = {
+type OplogOptions<H = m.OplogHeader, E = m.OplogEntry> = {
   pageSize?: number;
-  headerEncoding: Codec<m.OplogHeader>;
-  entryEncoding: Codec<m.OplogEntry>;
+  headerEncoding: Codec<H>;
+  entryEncoding: Codec<E>;
   readonly?: boolean;
 };
 
-interface DecodedEntry {
+interface DecodedEntry<E> {
   header: number;
   partial: boolean;
   byteLength: number;
-  message: any;
+  message: E;
 }
 
-interface OplogResult {
-  header: number;
-  entries: DecodedEntry[];
+interface OplogResult<H = m.OplogHeader, E = m.OplogEntry> {
+  header: H;
+  entries: DecodedEntry<E>[];
 }
 
-declare class Oplog {
+declare class Oplog<H = m.OplogHeader, E = m.OplogEntry> {
   storage: RandomAccessStorage;
-  headerEncoding: Codec<m.OplogHeader>;
-  entryEncoding: Codec<m.OplogEntry>;
+  headerEncoding: Codec<H>;
+  entryEncoding: Codec<E>;
   readonly: boolean;
   flushed: boolean;
   byteLength: number;
   length: number;
 
-  constructor(storage: RandomAccessStorage, options?: OplogOptions);
+  constructor(storage: RandomAccessStorage, options?: OplogOptions<H, E>);
 
   open(): Promise<OplogResult>;
-  flush(header: m.OplogHeader): Promise<void>;
-  append(batch: m.OplogEntry[], atomic?: boolean): Promise<void>;
+  flush(header: H): Promise<void>;
+  append(batch: E | E[], atomic?: boolean): Promise<void>;
   close(): Promise<void>;
 }
 

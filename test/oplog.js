@@ -88,7 +88,10 @@ test('oplog - custom encoding', async function (t) {
 test('oplog - alternating header writes', async function (t) {
   const storage = testStorage()
 
-  const log = new Oplog(storage)
+  const log = new Oplog(storage, {
+    headerEncoding: c.string,
+    entryEncoding: c.binary
+  })
 
   await log.open()
   await log.flush(b4a.from('1'))

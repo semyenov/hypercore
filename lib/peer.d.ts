@@ -13,7 +13,7 @@ import Replicator = require("./replicator");
 declare class Peer {
   tracer: Trace;
   core: any; // Consider replacing 'any' with a more specific type if available
-  replicator: any; // Consider replacing 'any' with a more specific type if available
+  replicator: Replicator; // Consider replacing 'any' with a more specific type if available
   stream: any; // Consider replacing 'any' with a more specific type if available
   protomux: Protomux;
   channel: Channel; // Consider replacing 'any' with a more specific type if available

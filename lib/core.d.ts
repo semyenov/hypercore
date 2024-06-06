@@ -110,9 +110,9 @@ export = class Core {
       preappend?: (values: Buffer[]) => Promise<void>;
     }
   ): Promise<{ length: number; byteLength: number }>;
-  checkConflict(proof: Data, from: number): Promise<boolean>;
-  verifyReorg(proof: Data): Promise<ReorgBatch>;
-  verify(proof: Data, from: number): Promise<boolean>;
+  checkConflict(proof: m.Data, from: number): Promise<boolean>;
+  verifyReorg(proof: m.Data): Promise<ReorgBatch>;
+  verify(proof: m.Data, from?: number): Promise<boolean>;
   reorg(batch: MerkleTreeBatch, from: number): Promise<boolean>;
   openSkipBitfield(): RemoteBitfield;
   close(): Promise<void>;

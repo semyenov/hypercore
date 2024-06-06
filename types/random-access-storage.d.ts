@@ -6,7 +6,7 @@ declare module "random-access-storage" {
 
   type Callback<T> = (err?: Error | null, result?: T) => void;
 
-  export default class RandomAccessStorage extends EventEmitter {
+  class RandomAccessStorage extends EventEmitter {
     readonly opened: boolean;
     readonly suspended: boolean;
     readonly closed: boolean;
@@ -18,7 +18,7 @@ declare module "random-access-storage" {
     readonly truncatable: boolean;
     readonly statable: boolean;
 
-    constructor(opts?: object);
+    constructor(opts?: object | string);
 
     read(offset: number, size: number, callback: Callback<Buffer>): void;
     del(offset: number, size: number, callback: Callback<void>): void;
@@ -56,4 +56,6 @@ declare module "random-access-storage" {
   function nextTick(req: Request, err: Error | null, val: any): void;
   function nextTickCallback(cb: (err: Error | null) => void): void;
   function noop(): void;
+
+  export = RandomAccessStorage;
 }
