@@ -37,6 +37,7 @@ declare class Core {
   updating: boolean;
   closed: boolean;
   skipBitfield: RemoteBitfield | null;
+  active: number;
 
   constructor(
     header: m.OplogHeader,
@@ -105,7 +106,7 @@ declare class Core {
   ): Promise<{ length: number; byteLength: number }>;
   checkConflict(proof: m.Data, from: number): Promise<boolean>;
   verifyReorg(proof: m.Data): Promise<m.TreeUpgrade>;
-  verify(proof: m.Data, from: number): Promise<boolean>;
+  verify(proof: m.Data, from?: number): Promise<boolean>;
   reorg(batch: MerkleTreeBatch, from: number): Promise<boolean>;
   openSkipBitfield(): RemoteBitfield;
   close(): Promise<void>;

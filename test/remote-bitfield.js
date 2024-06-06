@@ -3,6 +3,9 @@ const b4a = require('b4a')
 const RemoteBitfield = require('../lib/remote-bitfield')
 const { create, replicate } = require('./helpers')
 
+/** @typedef {import('../index')} Hypercore */
+/** @typedef {import('../lib/peer')} Peer */
+
 test('remote bitfield - findFirst', function (t) {
   const b = new RemoteBitfield()
 
@@ -58,7 +61,14 @@ test('remote congituous length consistency (remote-bitfield findFirst edge case)
   )
 })
 
-// Peer b as seen by peer a (b is the remote peer)
+/**
+ * Get peer b as seen by peer a (b is the remote peer).
+ *
+ * @param {Hypercore} a - The local hypercore.
+ * @param {Hypercore} b - The remote hypercore.
+ * @return {Peer} The peer object representing the remote peer.
+ * @throws {Error} Throws an error if the peer is not found.
+ */
 function getPeer (a, b) {
   for (const aPeer of a.replicator.peers) {
     for (const bPeer of b.replicator.peers) {

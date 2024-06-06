@@ -107,13 +107,13 @@ export class MerkleTreeBatch extends MerkleTree {
   hash(): Buffer;
   signable(manifestHash: Buffer): Buffer;
   signableCompat(noHeader: boolean): Buffer;
-  get(index: number, error: boolean): m.CompactNode | null;
+  get(index: number, error?: boolean): Promise<m.CompactNode | null>;
   proof(options: {
     block?: m.DataBlock;
     hash?: m.DataHash;
     seek?: m.DataSeek;
-    upgrade?: m.DataUpgrade;
-  }): m.Data;
+    upgrade?: Partial<m.DataUpgrade>;
+  }): Promise<m.Data>;
   verifyUpgrade(proof: m.Data): boolean;
   append(buf: Buffer): void;
   appendRoot(node: m.CompactNode, ite: FlatTreeIterator): void;

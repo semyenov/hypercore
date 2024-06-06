@@ -56,7 +56,7 @@ declare class RangeRequest extends Attachable {
     end: number,
     linear: boolean,
     ifAvailable: boolean,
-    blocks: any[],
+    blocks: number[],
   );
 }
 

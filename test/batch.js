@@ -5,9 +5,6 @@ const NS = b4a.alloc(32)
 const { create, replicate, eventFlush } = require('./helpers')
 
 test('batch append', async function (t) {
-
-  /** @typedef {import('../lib/core')} Core */ 
-  /** @type {Core} */ 
   const core = await create()
   await core.append(['a', 'b', 'c'])
 

@@ -1,11 +1,11 @@
-import { Codec, State } from "compact-encoding";
+import * as c from "compact-encoding";
 import * as m from "hypercore/lib/messages";
 import RandomAccessStorage from "random-access-storage";
 
 type OplogOptions<H = m.OplogHeader, E = m.OplogEntry> = {
   pageSize?: number;
-  headerEncoding: Codec<H>;
-  entryEncoding: Codec<E>;
+  headerEncoding: c.Codec<H>;
+  entryEncoding: c.Codec<E>;
   readonly?: boolean;
 };
 
@@ -21,10 +21,10 @@ interface OplogResult<H = m.OplogHeader, E = m.OplogEntry> {
   entries: DecodedEntry<E>[];
 }
 
-declare class Oplog<H = m.OplogHeader, E = m.OplogEntry> {
+declare class Oplog<H = string | Buffer | null, E = string | Buffer | null> {
   storage: RandomAccessStorage;
-  headerEncoding: Codec<H>;
-  entryEncoding: Codec<E>;
+  headerEncoding: c.Codec<H>;
+  entryEncoding: c.Codec<E>;
   readonly: boolean;
   flushed: boolean;
   byteLength: number;

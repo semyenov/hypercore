@@ -67,6 +67,7 @@ declare class Peer {
 
   get remoteContiguousLength(): number;
 
+  setDownloading(downloading: boolean): void;
   broadcastRange(start: number, length: number, drop: boolean): void;
   extension(name: string, message: Buffer): void;
   onextension(msg: m.Extension): void;

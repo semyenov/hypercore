@@ -31,7 +31,7 @@ declare class Multisig {
     from: number,
     to?: number,
     signature?: Buffer,
-  ): PartialSignatureResult | null;
+  ): Promise<PartialSignatureResult | null>;
   static upgradeNodes(
     tree: MerkleTree,
     from: number,

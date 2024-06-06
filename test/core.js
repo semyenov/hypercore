@@ -190,6 +190,9 @@ test('core - update hook is triggered', async function (t) {
   const peer = {}
 
   clone.onupdate = (status, bitfield, value, from) => {
+    console.log(status, bitfield, value, from)
+    
+
     t.ok(status & 0b01, 'was appended')
     t.is(from, peer, 'was remote')
     t.alike(bitfield, { drop: false, start: 1, length: 1 })

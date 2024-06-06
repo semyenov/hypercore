@@ -1,6 +1,6 @@
 import { Buffer } from "buffer";
 import { MerkleTreeBatch } from "hypercore/lib/merkle-tree";
-import { KeyPair, Manifest } from "hypercore/lib/messages";
+import * as m from "hypercore/lib/messages";
 import hypercoreCrypto from "hypercore-crypto";
 
 enum BAD_ARGUMENT {
@@ -34,7 +34,7 @@ export class Signer {
   );
 
   verify(batch: MerkleTreeBatch, signature: Signature): boolean;
-  sign(batch: MerkleTreeBatch, keyPair: KeyPair): Signature;
+  sign(batch: MerkleTreeBatch, keyPair: m.KeyPair): Signature;
 }
 
 export class CompatSigner extends Signer {
@@ -47,7 +47,7 @@ export class CompatSigner extends Signer {
   );
 
   verify(batch: MerkleTreeBatch, signature: Signature): boolean;
-  sign(batch: MerkleTreeBatch, keyPair: KeyPair): Signature;
+  sign(batch: MerkleTreeBatch, keyPair: m.KeyPair): Signature;
 }
 
 interface VerifierOptions {
@@ -67,24 +67,24 @@ declare class Verifier {
   prologue: Buffer | null;
   constructor(
     manifestHash: Buffer,
-    manifest: Manifest,
+    manifest: m.Manifest,
     options?: VerifierOptions
   );
 
-  verify(batch: MerkleTreeBatch[], signature: Signature): boolean;
-  sign(batch: MerkleTreeBatch[], keyPair: KeyPair): Signature;
+  verify(batch: MerkleTreeBatch[], signature?: Signature): boolean;
+  sign(batch: MerkleTreeBatch[], keyPair: m.KeyPair): Promise<Signature>;
   assemble(inputs: (MultisigInput | MultisigInputV0)[]): Signature;
 
-  static manifestHash(manifest: Manifest): Buffer;
-  static defaultSignerManifest(publicKey: Buffer): Manifest;
-  static fromManifest(manifest: Manifest, opts?: VerifierOptions): Verifier;
-  static createManifest(inp: Manifest): Manifest;
-  static isValidManifest(key: Buffer, manifest: Manifest): boolean;
-  static isCompat(key: Buffer, manifest: Manifest): boolean;
+  static manifestHash(manifest: m.Manifest): Buffer;
+  static defaultSignerManifest(publicKey: Buffer): m.Manifest;
+  static fromManifest(manifest: m.Manifest, opts?: VerifierOptions): Verifier;
+  static createManifest(inp: m.Manifest): m.Manifest;
+  static isValidManifest(key: Buffer, manifest: m.Manifest): boolean;
+  static isCompat(key: Buffer, manifest: m.Manifest): boolean;
   static sign(
-    manifest: Manifest,
+    manifest: m.Manifest,
     batch: MerkleTreeBatch[],
-    keyPair: KeyPair,
+    keyPair: m.KeyPair,
     opts?: VerifierOptions
   ): Signature;
 }

@@ -3,6 +3,7 @@ import { Codec } from "compact-encoding";
 import { Buffer } from "b4a";
 import Info, { InfoOptions } from "./info";
 import Hypercore = require("..");
+import type { MerkleTreeBatch } from "./merkle-tree";
 
 interface BatchInfo {
   length: number;
@@ -89,7 +90,9 @@ declare class HypercoreBatch extends EventEmitter {
   private _waitForFlush(): Promise<void>;
   restoreBatch(length: number, blocks: any): Promise<any>;
   private _catchupBatch(clone: boolean): any;
-  createTreeBatch(length: number, opts?: CreateTreeBatchOptions): any;
+  createTreeBatch(length: number, blocks?: unknown[]): MerkleTreeBatch;
+  createTreeBatch(length?: number, opts?: CreateTreeBatchOptions): MerkleTreeBatch;
+  truncate(newLength?: number, fork?: number): Promise<void>;
   truncate(newLength?: number, opts?: TruncateOptions): Promise<void>;
   append(blocks: any): Promise<BatchInfo>;
   private _encode(enc: Codec, val: any): Buffer;

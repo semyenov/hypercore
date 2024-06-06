@@ -6,5 +6,5 @@ export interface Corrections {
   blocks: number;
 }
 
-async function auditCore(core: Core): Promise<Corrections>;
+declare async function auditCore(core: Core): Promise<Corrections>;
 export = auditCore;

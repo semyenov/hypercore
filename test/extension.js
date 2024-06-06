@@ -52,13 +52,18 @@ test('two extensions', async function (t) {
 
   await eventFlush()
 
-  a.registerExtension('test-extension-2', {
+  const bbb = a.registerExtension('test-extension-2', {
     encoding: 'utf-8',
     onmessage: (message, peer) => {
+      console.log(message, peer)
+
+
       t.ok(peer === a.peers[0])
       t.is(message, messages.pop())
     }
   })
+  console.log('bbb', bbb)
+
 
   bExt2.send('hello', b.peers[0])
 
