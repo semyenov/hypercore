@@ -1,5 +1,5 @@
 const b4a = require("b4a");
-const Hypercore = require("hypercore/index");
+const Hypercore = require("./index");
 const Protomux = require("protomux");
 const CompactEncoding = require("compact-encoding");
 const SecretStream = require("@hyperswarm/secret-stream");

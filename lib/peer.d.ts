@@ -9,12 +9,14 @@ import { RemoteBitfield } from "./remote-bitfield";
 import * as m from "./messages";
 import Protomux = require("protomux");
 import Replicator = require("./replicator");
+import type NoiseSecretStream from "@hyperswarm/secret-stream";
+import type Core from "./core";
 
 declare class Peer {
-  tracer: Trace;
-  core: any; // Consider replacing 'any' with a more specific type if available
+  tracer: Hypertrace | null;
+  core: Core; // Consider replacing 'any' with a more specific type if available
   replicator: Replicator; // Consider replacing 'any' with a more specific type if available
-  stream: any; // Consider replacing 'any' with a more specific type if available
+  stream: NoiseSecretStream; // Consider replacing 'any' with a more specific type if available
   protomux: Protomux;
   channel: Channel; // Consider replacing 'any' with a more specific type if available
   remotePublicKey: Buffer;
