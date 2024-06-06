@@ -1,21 +1,8 @@
 import { EventEmitter } from "events";
 import { Codec } from "compact-encoding";
 import { Buffer } from "b4a";
-
-interface Session {
-  id: any;
-  key: any;
-  discoveryKey: any;
-  core: any;
-  manifest: any;
-  ready(): Promise<void>;
-  has(index: number): Promise<boolean>;
-  update(opts: any): Promise<void>;
-  get(index: number, opts: any): Promise<any>;
-  createTreeBatch(): any;
-  close(): Promise<void>;
-  // other session methods and properties
-}
+import Info, { InfoOptions } from "./info";
+import Hypercore = require("..");
 
 interface BatchInfo {
   length: number;
@@ -49,7 +36,7 @@ interface SeekResult {
 }
 
 declare class HypercoreBatch extends EventEmitter {
-  session: Session;
+  session: Hypercore;
   opened: boolean;
   closed: boolean;
   opening: Promise<void> | null;
@@ -71,11 +58,11 @@ declare class HypercoreBatch extends EventEmitter {
   private _clear: boolean;
 
   constructor(
-    session: Session,
+    session: Hypercore,
     checkoutLength: number,
     autoClose: boolean,
     restore: boolean,
-    clear: boolean
+    clear: boolean,
   );
 
   get id(): any;
@@ -96,7 +83,7 @@ declare class HypercoreBatch extends EventEmitter {
   treeHash(): any;
   setUserData(key: any, value: any, opts: UserDataOptions): any;
   getUserData(key: any, opts: UserDataOptions): any;
-  info(opts: any): Promise<any>;
+  info(opts?: InfoOptions): Promise<Info>;
   seek(bytes: number, opts?: any): Promise<SeekResult>;
   get(index: number, opts?: any): Promise<any>;
   private _waitForFlush(): Promise<void>;
@@ -104,7 +91,7 @@ declare class HypercoreBatch extends EventEmitter {
   private _catchupBatch(clone: boolean): any;
   createTreeBatch(length: number, opts?: CreateTreeBatchOptions): any;
   truncate(newLength?: number, opts?: TruncateOptions): Promise<void>;
-  append(blocks: any[]): Promise<BatchInfo>;
+  append(blocks: any): Promise<BatchInfo>;
   private _encode(enc: Codec, val: any): Buffer;
   private _encrypt(index: number, buffer: Buffer): Buffer;
   flush(opts?: FlushOptions): Promise<boolean>;
@@ -112,7 +99,7 @@ declare class HypercoreBatch extends EventEmitter {
     length: number,
     keyPair: any,
     signature: any,
-    pending: boolean
+    pending: boolean,
   ): Promise<boolean>;
   close(): Promise<void>;
   private _close(): Promise<void>;

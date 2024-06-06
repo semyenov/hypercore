@@ -1,4 +1,4 @@
-import { AttachableRequest } from "./replicator"
+import { AttachableRequest } from "./replicator";
 
 declare class Download {
   constructor(req: Promise<AttachableRequest>);
@@ -12,4 +12,4 @@ declare class Download {
   destroy(): void;
 }
 
-export = Download
+export = Download;

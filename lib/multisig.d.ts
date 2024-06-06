@@ -30,12 +30,12 @@ declare class Multisig {
     signer: number,
     from: number,
     to?: number,
-    signature?: Buffer
+    signature?: Buffer,
   ): PartialSignatureResult | null;
   static upgradeNodes(
     tree: MerkleTree,
     from: number,
-    to: number
+    to: number,
   ): Promise<UpgradeNodesResult>;
 
   static signableLength(lengths: number[], quorum: number): number;

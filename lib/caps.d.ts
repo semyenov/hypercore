@@ -7,19 +7,19 @@ export const BLOCK_ENCRYPTION: Buffer;
 export function replicate(
   isInitiator: boolean,
   key: Buffer,
-  handshakeHash?: Buffer
+  handshakeHash?: Buffer,
 ): Buffer;
 
 export function treeSignable(
   manifestHash: Buffer,
   treeHash: Buffer,
   length: number,
-  fork: number
+  fork: number,
 ): Buffer;
 
 export function treeSignableCompat(
   hash: Buffer,
   length: number,
   fork: number,
-  noHeader?: boolean
+  noHeader?: boolean,
 ): Buffer;

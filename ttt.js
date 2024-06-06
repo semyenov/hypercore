@@ -6,9 +6,13 @@ const SecretStream = require("@hyperswarm/secret-stream");
 const test = require('brittle')
 const c = require('compact-encoding')
 
+globalThis[Symbol.for('hypertrace.traceFunction')] = console.log
+
 async function test1() {
   const a1 = new Hypercore("./a1");
   await a1.ready();
+
+  console.log(a1.tracer)
 
   const b1 = new Hypercore("./b1", a1.key);
   await b1.ready();
@@ -30,553 +34,555 @@ async function test1() {
   await s2.destroy();
 }
 
-/**
- * Replicates the data from the raw stream of `a` to the raw stream of `b` and vice versa.
- *
- * @param {Protomux<SecretStream>} a - The first object containing the raw stream to be replicated.
- * @param {Protomux<SecretStream>} b - The second object containing the raw stream to be replicated.
- */
-function replicate(a, b) {
-  a.stream.rawStream.pipe(b.stream.rawStream).pipe(a.stream.rawStream);
-}
-
-async function test2() {
-  const a = new Protomux(new SecretStream(true));
-  const b = new Protomux(new SecretStream(false));
-
-  replicate(a, b);
-
-  const p = a.createChannel({
-    protocol: "foo",
-    onopen(handshake, channel) {
-      // console.log("open", handshake, channel);
-    },
-  });
-
-  if (p === null) return;
-
-  p.open();
-
-  const q = p.addMessage({
-    encoding: CompactEncoding.string,
-    onmessage(message) {
-      console.log("message", message);
-    },
-  });
-
-  const bp = b.createChannel({
-    protocol: "foo",
-  });
-
-  if (bp === null) return;
-
-  bp.open();
-  bp.addMessage({ encoding: CompactEncoding.string }).send("hello world");
-
-  a.destroy();
-  b.destroy();
-}
+test1()
 
-// test2();
+// /**
+//  * Replicates the data from the raw stream of `a` to the raw stream of `b` and vice versa.
+//  *
+//  * @param {Protomux<SecretStream>} a - The first object containing the raw stream to be replicated.
+//  * @param {Protomux<SecretStream>} b - The second object containing the raw stream to be replicated.
+//  */
+// function replicate(a, b) {
+//   a.stream.rawStream.pipe(b.stream.rawStream).pipe(a.stream.rawStream);
+// }
 
-test('basic', function (t) {
-  const a = new Protomux(new SecretStream(true))
-  const b = new Protomux(new SecretStream(false))
+// async function test2() {
+//   const a = new Protomux(new SecretStream(true));
+//   const b = new Protomux(new SecretStream(false));
 
-  replicate(a, b)
+//   replicate(a, b);
+
+//   const p = a.createChannel({
+//     protocol: "foo",
+//     onopen(handshake, channel) {
+//       // console.log("open", handshake, channel);
+//     },
+//   });
 
-  const p = a.createChannel({
-    protocol: 'foo',
-    onopen () {
-      t.pass('a remote opened')
-    }
-  })
+//   if (p === null) return;
+
+//   p.open();
+
+//   const q = p.addMessage({
+//     encoding: CompactEncoding.string,
+//     onmessage(message) {
+//       console.log("message", message);
+//     },
+//   });
 
-  if (p === null) return
-  p.open()
+//   const bp = b.createChannel({
+//     protocol: "foo",
+//   });
 
-  p.addMessage({
-    encoding: c.string,
-    onmessage (message) {
-      t.is(message, 'hello world')
-    }
-  })
+//   if (bp === null) return;
+
+//   bp.open();
+//   bp.addMessage({ encoding: CompactEncoding.string }).send("hello world");
 
-  const bp = b.createChannel({
-    protocol: 'foo'
-  })
+//   a.destroy();
+//   b.destroy();
+// }
 
-  if (bp === null) return
+// // test2();
 
-  t.plan(2)
+// test('basic', function (t) {
+//   const a = new Protomux(new SecretStream(true))
+//   const b = new Protomux(new SecretStream(false))
 
-  bp.open()
-  bp.addMessage({ encoding: c.string }).send('hello world')
-})
+//   replicate(a, b)
 
-test('echo message', function (t) {
-  const a = new Protomux(new SecretStream(true))
-  const b = new Protomux(new SecretStream(false))
+//   const p = a.createChannel({
+//     protocol: 'foo',
+//     onopen () {
+//       t.pass('a remote opened')
+//     }
+//   })
 
-  replicate(a, b)
+//   if (p === null) return
+//   p.open()
 
-  const ap = a.createChannel({
-    protocol: 'foo'
-  })
+//   p.addMessage({
+//     encoding: c.string,
+//     onmessage (message) {
+//       t.is(message, 'hello world')
+//     }
+//   })
 
-  if (ap === null) return
-  ap.open()
+//   const bp = b.createChannel({
+//     protocol: 'foo'
+//   })
 
-  const aEcho = ap.addMessage({
-    encoding: c.string,
-    onmessage (message) {
-      aEcho.send('echo: ' + message)
-    }
-  })
+//   if (bp === null) return
 
-  const bc = b.createChannel({
-    protocol: 'other'
-  })
+//   t.plan(2)
 
-  if (bc === null) return
-  bc.open()
+//   bp.open()
+//   bp.addMessage({ encoding: c.string }).send('hello world')
+// })
 
-  const bp = b.createChannel({
-    protocol: 'foo',
-    onopen () {
-      t.pass('b remote opened')
-    }
-  })
+// test('echo message', function (t) {
+//   const a = new Protomux(new SecretStream(true))
+//   const b = new Protomux(new SecretStream(false))
 
-  if (bp === null) return
-  bp.open()
+//   replicate(a, b)
 
-  const bEcho = bp.addMessage({
-    encoding: c.string,
-    onmessage (message) {
-      t.is(message, 'echo: hello world')
-    }
-  })
+//   const ap = a.createChannel({
+//     protocol: 'foo'
+//   })
 
-  t.plan(2)
+//   if (ap === null) return
+//   ap.open()
 
-  bEcho.send('hello world')
-})
+//   const aEcho = ap.addMessage({
+//     encoding: c.string,
+//     onmessage (message) {
+//       aEcho.send('echo: ' + message)
+//     }
+//   })
 
-test('multi message', function (t) {
-  const a = new Protomux(new SecretStream(true))
+//   const bc = b.createChannel({
+//     protocol: 'other'
+//   })
 
-  const ac = a.createChannel({
-    protocol: 'other'
-  }).open()
+//   if (bc === null) return
+//   bc.open()
 
-  const ap = a.createChannel({
-    protocol: 'multi'
-  })
+//   const bp = b.createChannel({
+//     protocol: 'foo',
+//     onopen () {
+//       t.pass('b remote opened')
+//     }
+//   })
 
-  ap.open()
+//   if (bp === null) return
+//   bp.open()
 
-  const a1 = ap.addMessage({ encoding: c.int })
-  const a2 = ap.addMessage({ encoding: c.string })
-  const a3 = ap.addMessage({ encoding: c.string })
+//   const bEcho = bp.addMessage({
+//     encoding: c.string,
+//     onmessage (message) {
+//       t.is(message, 'echo: hello world')
+//     }
+//   })
 
-  const b = new Protomux(new SecretStream(false))
+//   t.plan(2)
 
-  const bp = b.createChannel({
-    protocol: 'multi'
-  })
+//   bEcho.send('hello world')
+// })
 
-  bp.open()
+// test('multi message', function (t) {
+//   const a = new Protomux(new SecretStream(true))
 
-  const b1 = bp.addMessage({ encoding: c.int })
-  const b2 = bp.addMessage({ encoding: c.string })
+//   const ac = a.createChannel({
+//     protocol: 'other'
+//   }).open()
 
-  replicate(a, b)
+//   const ap = a.createChannel({
+//     protocol: 'multi'
+//   })
 
-  t.plan(2)
+//   ap.open()
 
-  a1.send(42)
-  a2.send('a string with 42')
-  a3.send('should be ignored')
+//   const a1 = ap.addMessage({ encoding: c.int })
+//   const a2 = ap.addMessage({ encoding: c.string })
+//   const a3 = ap.addMessage({ encoding: c.string })
 
-  const expected = [
-    42,
-    'a string with 42'
-  ]
+//   const b = new Protomux(new SecretStream(false))
 
-  b1.onmessage = function (message) {
-    t.is(message, expected.shift())
-  }
+//   const bp = b.createChannel({
+//     protocol: 'multi'
+//   })
 
-  b2.onmessage = function (message) {
-    t.is(message, expected.shift())
-  }
-})
+//   bp.open()
 
-test('corks', function (t) {
-  const a = new Protomux(new SecretStream(true))
+//   const b1 = bp.addMessage({ encoding: c.int })
+//   const b2 = bp.addMessage({ encoding: c.string })
 
-  a.cork()
+//   replicate(a, b)
 
-  a.createChannel({
-    protocol: 'other'
-  }).open()
+//   t.plan(2)
 
-  const ap = a.createChannel({
-    protocol: 'multi'
-  })
+//   a1.send(42)
+//   a2.send('a string with 42')
+//   a3.send('should be ignored')
 
-  ap.open()
+//   const expected = [
+//     42,
+//     'a string with 42'
+//   ]
 
-  const a1 = ap.addMessage({ encoding: c.int })
-  const a2 = ap.addMessage({ encoding: c.string })
+//   b1.onmessage = function (message) {
+//     t.is(message, expected.shift())
+//   }
 
-  const b = new Protomux(new SecretStream(false))
+//   b2.onmessage = function (message) {
+//     t.is(message, expected.shift())
+//   }
+// })
 
-  const bp = b.createChannel({
-    protocol: 'multi'
-  })
+// test('corks', function (t) {
+//   const a = new Protomux(new SecretStream(true))
 
-  bp.open()
+//   a.cork()
 
-  const b1 = bp.addMessage({ encoding: c.int })
-  const b2 = bp.addMessage({ encoding: c.string })
+//   a.createChannel({
+//     protocol: 'other'
+//   }).open()
 
-  replicate(a, b)
+//   const ap = a.createChannel({
+//     protocol: 'multi'
+//   })
 
-  t.plan(4 + 1)
+//   ap.open()
 
-  const expected = [
-    1,
-    2,
-    3,
-    'a string'
-  ]
+//   const a1 = ap.addMessage({ encoding: c.int })
+//   const a2 = ap.addMessage({ encoding: c.string })
 
-  a1.send(1)
-  a1.send(2)
-  a1.send(3)
-  a2.send('a string')
+//   const b = new Protomux(new SecretStream(false))
 
-  a.uncork()
+//   const bp = b.createChannel({
+//     protocol: 'multi'
+//   })
 
-  b.stream.once('data', function (data) {
-    t.ok(expected.length === 0, 'received all messages in one data packet')
-  })
+//   bp.open()
 
-  b1.onmessage = function (message) {
-    t.is(message, expected.shift())
-  }
+//   const b1 = bp.addMessage({ encoding: c.int })
+//   const b2 = bp.addMessage({ encoding: c.string })
 
-  b2.onmessage = function (message) {
-    t.is(message, expected.shift())
-  }
-})
+//   replicate(a, b)
 
-test('mega cork', function (t) {
-  const a = new Protomux(new SecretStream(true))
+//   t.plan(4 + 1)
 
-  a.cork()
+//   const expected = [
+//     1,
+//     2,
+//     3,
+//     'a string'
+//   ]
 
-  const ap = a.createChannel({
-    protocol: 'mega'
-  })
+//   a1.send(1)
+//   a1.send(2)
+//   a1.send(3)
+//   a2.send('a string')
 
-  ap.open()
+//   a.uncork()
 
-  const a1 = ap.addMessage({ encoding: c.buffer })
+//   b.stream.once('data', function (data) {
+//     t.ok(expected.length === 0, 'received all messages in one data packet')
+//   })
 
-  const b = new Protomux(new SecretStream(false))
+//   b1.onmessage = function (message) {
+//     t.is(message, expected.shift())
+//   }
 
-  const bp = b.createChannel({
-    protocol: 'mega'
-  })
+//   b2.onmessage = function (message) {
+//     t.is(message, expected.shift())
+//   }
+// })
 
-  bp.open()
+// test('mega cork', function (t) {
+//   const a = new Protomux(new SecretStream(true))
 
-  const b1 = bp.addMessage({ encoding: c.buffer })
+//   a.cork()
 
-  replicate(a, b)
+//   const ap = a.createChannel({
+//     protocol: 'mega'
+//   })
 
-  t.plan(32 + 4)
+//   ap.open()
 
-  const buf = b4a.alloc(1024 * 1024)
+//   const a1 = ap.addMessage({ encoding: c.buffer })
 
-  /** @type {Buffer[]} */
-  const expected = []
+//   const b = new Protomux(new SecretStream(false))
 
-  for (let i = 0; i < 32; i++) {
-    a1.send(buf)
-    expected.push(buf)
-  }
+//   const bp = b.createChannel({
+//     protocol: 'mega'
+//   })
 
-  a.uncork()
+//   bp.open()
 
-  b.stream.on('data', function (data) {
-    t.ok(data.byteLength > 8000000, 'got big message')
-  })
+//   const b1 = bp.addMessage({ encoding: c.buffer })
 
-  b1.onmessage = function (message) {
-    t.alike(message, expected.shift())
-  }
-})
+//   replicate(a, b)
 
-test('handshake', function (t) {
-  const a = new Protomux(new SecretStream(true))
-  const b = new Protomux(new SecretStream(false))
+//   t.plan(32 + 4)
 
-  replicate(a, b)
+//   const buf = b4a.alloc(1024 * 1024)
 
-  const p = a.createChannel({
-    protocol: 'foo',
-    handshake: c.string,
-    onopen (handshake) {
-      t.is(handshake, 'b handshake')
-    }
-  })
+//   /** @type {Buffer[]} */
+//   const expected = []
 
-  p.open('a handshake')
+//   for (let i = 0; i < 32; i++) {
+//     a1.send(buf)
+//     expected.push(buf)
+//   }
 
-  const bp = b.createChannel({
-    protocol: 'foo',
-    handshake: c.string,
-    onopen (handshake) {
-      t.is(handshake, 'a handshake')
-    }
-  })
+//   a.uncork()
 
-  t.plan(2)
+//   b.stream.on('data', function (data) {
+//     t.ok(data.byteLength > 8000000, 'got big message')
+//   })
 
-  bp.open('b handshake')
-})
+//   b1.onmessage = function (message) {
+//     t.alike(message, expected.shift())
+//   }
+// })
 
-test('rejections', function (t) {
-  t.plan(1)
+// test('handshake', function (t) {
+//   const a = new Protomux(new SecretStream(true))
+//   const b = new Protomux(new SecretStream(false))
 
-  const a = new Protomux(new SecretStream(true))
-  const b = new Protomux(new SecretStream(false))
+//   replicate(a, b)
 
-  replicate(a, b)
+//   const p = a.createChannel({
+//     protocol: 'foo',
+//     handshake: c.string,
+//     onopen (handshake) {
+//       t.is(handshake, 'b handshake')
+//     }
+//   })
 
-  let closed = 0
-  for (let i = 0; i < 10; i++) {
-    const p = a.createChannel({
-      protocol: 'foo#' + i,
-      onclose () {
-        closed++
-        if (closed === 10) t.pass('all closed')
-      }
-    })
+//   p.open('a handshake')
 
-    p.open()
-  }
-})
+//   const bp = b.createChannel({
+//     protocol: 'foo',
+//     handshake: c.string,
+//     onopen (handshake) {
+//       t.is(handshake, 'a handshake')
+//     }
+//   })
 
-test('pipeline close and rejections', function (t) {
-  t.plan(1)
+//   t.plan(2)
 
-  const a = new Protomux(new SecretStream(true))
-  const b = new Protomux(new SecretStream(false))
+//   bp.open('b handshake')
+// })
 
-  replicate(a, b)
+// test('rejections', function (t) {
+//   t.plan(1)
 
-  let closed = 0
-  for (let i = 0; i < 10; i++) {
-    const p = a.createChannel({
-      protocol: 'foo#' + i,
-      onclose () {
-        closed++
-        if (closed === 10) {
-          t.pass('all closed')
-        }
-      }
-    })
+//   const a = new Protomux(new SecretStream(true))
+//   const b = new Protomux(new SecretStream(false))
 
-    p.open()
-    p.close()
-  }
-})
+//   replicate(a, b)
 
-test('alias', function (t) {
-  const a = new Protomux(new SecretStream(true))
-  const b = new Protomux(new SecretStream(false))
+//   let closed = 0
+//   for (let i = 0; i < 10; i++) {
+//     const p = a.createChannel({
+//       protocol: 'foo#' + i,
+//       onclose () {
+//         closed++
+//         if (closed === 10) t.pass('all closed')
+//       }
+//     })
 
-  replicate(a, b)
+//     p.open()
+//   }
+// })
 
-  const p = a.createChannel({
-    protocol: 'foo',
-    aliases: ['bar'],
-    onopen () {
-      t.pass('a remote opened')
-    }
-  })
+// test('pipeline close and rejections', function (t) {
+//   t.plan(1)
 
-  p.open()
+//   const a = new Protomux(new SecretStream(true))
+//   const b = new Protomux(new SecretStream(false))
 
-  p.addMessage({
-    encoding: c.string,
-    onmessage (message) {
-      t.is(message, 'hello world')
-    }
-  })
+//   replicate(a, b)
 
-  const bp = b.createChannel({
-    protocol: 'bar'
-  })
+//   let closed = 0
+//   for (let i = 0; i < 10; i++) {
+//     const p = a.createChannel({
+//       protocol: 'foo#' + i,
+//       onclose () {
+//         closed++
+//         if (closed === 10) {
+//           t.pass('all closed')
+//         }
+//       }
+//     })
 
-  t.plan(2)
+//     p.open()
+//     p.close()
+//   }
+// })
 
-  bp.open()
-  bp.addMessage({ encoding: c.string }).send('hello world')
-})
+// test('alias', function (t) {
+//   const a = new Protomux(new SecretStream(true))
+//   const b = new Protomux(new SecretStream(false))
 
-test('deduplicate muxers', function (t) {
-  const sa = new SecretStream(true)
-  const sb = new SecretStream(false)
+//   replicate(a, b)
 
-  sa.rawStream.pipe(sb.rawStream).pipe(sa.rawStream);
+//   const p = a.createChannel({
+//     protocol: 'foo',
+//     aliases: ['bar'],
+//     onopen () {
+//       t.pass('a remote opened')
+//     }
+//   })
 
-  const a = Protomux.from(sa)
-  const foo = a.createChannel({
-    protocol: 'foo',
-    onopen () { t.pass('a remote opened') }
-  })
+//   p.open()
 
-  foo.open()
+//   p.addMessage({
+//     encoding: c.string,
+//     onmessage (message) {
+//       t.is(message, 'hello world')
+//     }
+//   })
 
-  foo.addMessage({
-    encoding: c.string,
-    onmessage (message) { t.is(message, 'hello foo') }
-  })
+//   const bp = b.createChannel({
+//     protocol: 'bar'
+//   })
 
-  const bfoo = Protomux.from(sb).createChannel({ protocol: 'foo' })
+//   t.plan(2)
 
-  // Another Protomux instance for another protocol
-  const a2 = Protomux.from(sa)
-  const bar = a2.createChannel({
-    protocol: 'bar',
-    onopen () { t.pass('a remote opened') }
-  })
+//   bp.open()
+//   bp.addMessage({ encoding: c.string }).send('hello world')
+// })
 
-  bar.open()
+// test('deduplicate muxers', function (t) {
+//   const sa = new SecretStream(true)
+//   const sb = new SecretStream(false)
 
-  bar.addMessage({
-    encoding: c.string,
-    onmessage (message) { t.is(message, 'hello bar') }
-  })
+//   sa.rawStream.pipe(sb.rawStream).pipe(sa.rawStream);
 
-  const bbar = Protomux.from(sb).createChannel({ protocol: 'bar' })
+//   const a = Protomux.from(sa)
+//   const foo = a.createChannel({
+//     protocol: 'foo',
+//     onopen () { t.pass('a remote opened') }
+//   })
 
-  t.plan(4)
+//   foo.open()
 
-  bfoo.open()
-  bfoo.addMessage({ encoding: c.string }).send('hello foo')
+//   foo.addMessage({
+//     encoding: c.string,
+//     onmessage (message) { t.is(message, 'hello foo') }
+//   })
 
-  bbar.open()
-  bbar.addMessage({ encoding: c.string }).send('hello bar')
-})
+//   const bfoo = Protomux.from(sb).createChannel({ protocol: 'foo' })
 
-test('open + send + close on same tick', async function (t) {
-  t.plan(4)
+//   // Another Protomux instance for another protocol
+//   const a2 = Protomux.from(sa)
+//   const bar = a2.createChannel({
+//     protocol: 'bar',
+//     onopen () { t.pass('a remote opened') }
+//   })
 
-  const a = new Protomux(new SecretStream(true))
-  const b = new Protomux(new SecretStream(false))
+//   bar.open()
 
-  replicate(a, b)
+//   bar.addMessage({
+//     encoding: c.string,
+//     onmessage (message) { t.is(message, 'hello bar') }
+//   })
 
-  const ac = a.createChannel({
-    protocol: 'foo',
-    onopen () {
-      t.pass('a opened')
-    },
-    onclose () {
-      t.pass('a closed')
-    }
-  })
+//   const bbar = Protomux.from(sb).createChannel({ protocol: 'bar' })
 
-  ac.open()
-  ac.addMessage({
-    encoding: c.string,
-    onmessage (message) { t.is(message, 'hello') }
-  })
+//   t.plan(4)
 
-  const bc = b.createChannel({
-    protocol: 'foo',
-    onopen () {
-      t.fail('b opened')
-    },
-    onclose () {
-      t.pass('b closed')
-    }
-  })
+//   bfoo.open()
+//   bfoo.addMessage({ encoding: c.string }).send('hello foo')
 
-  bc.open()
-  bc.addMessage({ encoding: c.string }).send('hello')
-  bc.close()
-})
+//   bbar.open()
+//   bbar.addMessage({ encoding: c.string }).send('hello bar')
+// })
 
-test('drain', function (t) {
-  t.plan(7)
+// test('open + send + close on same tick', async function (t) {
+//   t.plan(4)
 
-  const mux1 = new Protomux(new SecretStream(true))
-  const mux2 = new Protomux(new SecretStream(false))
+//   const a = new Protomux(new SecretStream(true))
+//   const b = new Protomux(new SecretStream(false))
 
-  t.ok(mux1.drained)
-  t.ok(mux2.drained)
+//   replicate(a, b)
 
-  replicate(mux1, mux2)
+//   const ac = a.createChannel({
+//     protocol: 'foo',
+//     onopen () {
+//       t.pass('a opened')
+//     },
+//     onclose () {
+//       t.pass('a closed')
+//     }
+//   })
 
-  const a = mux1.createChannel({
-    protocol: 'foo',
-    messages: [
-      { encoding: c.string }
-    ]
-  })
+//   ac.open()
+//   ac.addMessage({
+//     encoding: c.string,
+//     onmessage (message) { t.is(message, 'hello') }
+//   })
 
-  t.ok(a.drained)
+//   const bc = b.createChannel({
+//     protocol: 'foo',
+//     onopen () {
+//       t.fail('b opened')
+//     },
+//     onclose () {
+//       t.pass('b closed')
+//     }
+//   })
 
-  a.open()
+//   bc.open()
+//   bc.addMessage({ encoding: c.string }).send('hello')
+//   bc.close()
+// })
 
-  const b = mux2.createChannel({
-    protocol: 'foo',
-    messages: [
-      { encoding: c.string }
-    ],
-    ondrain (c) {
-      t.is(c, b)
-      t.ok(mux1.drained)
-    }
-  })
+// test('drain', function (t) {
+//   t.plan(7)
 
-  t.ok(b.drained)
+//   const mux1 = new Protomux(new SecretStream(true))
+//   const mux2 = new Protomux(new SecretStream(false))
 
-  b.open()
+//   t.ok(mux1.drained)
+//   t.ok(mux2.drained)
 
-  while (true) {
-    const drained = b.messages[0].send('hello world')
-    if (b.drained !== drained) t.fail('Drained property should be equal as in channel')
-    if (mux2.drained !== drained) t.fail('Drained property should be equal as in mux')
+//   replicate(mux1, mux2)
 
-    if (!drained) {
-      t.pass()
-      break
-    }
-  }
-})
+//   const a = mux1.createChannel({
+//     protocol: 'foo',
+//     messages: [
+//       { encoding: c.string }
+//     ]
+//   })
 
-test('keep alive - one side only', function (t) {
-  t.plan(1)
+//   t.ok(a.drained)
 
-  const a = new Protomux(new SecretStream(true))
-  const b = new Protomux(new SecretStream(false))
+//   a.open()
 
-  a.stream.on('error', (err) => t.fail(err.message))
-  b.stream.on('error', (err) => t.fail(err.message))
+//   const b = mux2.createChannel({
+//     protocol: 'foo',
+//     messages: [
+//       { encoding: c.string }
+//     ],
+//     ondrain (c) {
+//       t.is(c, b)
+//       t.ok(mux1.drained)
+//     }
+//   })
 
-  a.stream.setKeepAlive(1)
+//   t.ok(b.drained)
 
-  replicate(a, b)
+//   b.open()
 
-  setTimeout(() => t.pass(), 500)
-})
+//   while (true) {
+//     const drained = b.messages[0].send('hello world')
+//     if (b.drained !== drained) t.fail('Drained property should be equal as in channel')
+//     if (mux2.drained !== drained) t.fail('Drained property should be equal as in mux')
+
+//     if (!drained) {
+//       t.pass()
+//       break
+//     }
+//   }
+// })
+
+// test('keep alive - one side only', function (t) {
+//   t.plan(1)
+
+//   const a = new Protomux(new SecretStream(true))
+//   const b = new Protomux(new SecretStream(false))
+
+//   a.stream.on('error', (err) => t.fail(err.message))
+//   b.stream.on('error', (err) => t.fail(err.message))
+
+//   a.stream.setKeepAlive(1)
+
+//   replicate(a, b)
+
+//   setTimeout(() => t.pass(), 500)
+// })
 
