@@ -176,7 +176,7 @@ declare class Hypercore extends EventEmitter {
   getUserData(key: string): Promise<Buffer | null>;
   createTreeBatch(): any;
   findingPeers(): () => void;
-  info(opts?: InfoOptions): Promise<any>;
+  info(opts?: InfoOptions): Promise<Info>;
   update(opts?: any): Promise<boolean>;
   batch(opts?: { checkout?: number, autoClose?: boolean, session?: boolean, restore?: boolean, clear?: boolean }): HypercoreBatch;
   seek(bytes: number, opts?: any): Promise<any>;

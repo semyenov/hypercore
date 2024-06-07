@@ -20,26 +20,24 @@ interface UpgradeNodesResult {
   nodes: m.CompactNode[];
 }
 
-declare class Multisig {
-  static assemblev0(inputs: m.MultisigInput[]): Buffer;
-  static assemble(inputs: m.MultisigInput[]): Buffer;
-  static inflatev0(data: Buffer): m.MultiSignatureV0;
-  static inflate(data: Buffer): m.MultiSignature;
-  static partialSignature(
-    tree: MerkleTree,
-    signer: number,
-    from: number,
-    to?: number,
-    signature?: Buffer,
-  ): Promise<PartialSignatureResult | null>;
-  static upgradeNodes(
-    tree: MerkleTree,
-    from: number,
-    to: number,
-  ): Promise<UpgradeNodesResult>;
+export function assemblev0(inputs: m.MultisigInput[]): Buffer;
+export function assemble(inputs: m.MultisigInput[]): Buffer;
+export function inflatev0(data: Buffer): m.MultiSignatureV0;
+export function inflate(data: Buffer): m.MultiSignature;
+export function partialSignature(
+  tree: MerkleTree,
+  signer: number,
+  from: number,
+  to?: number,
+  signature?: Buffer,
+): Promise<PartialSignatureResult | null>;
+export function upgradeNodes(
+  tree: MerkleTree,
+  from: number,
+  to: number,
+): Promise<UpgradeNodesResult>;
 
-  static signableLength(lengths: number[], quorum: number): number;
-}
+export function signableLength(lengths: number[], quorum: number): number;
 
 type PartialSignatureResult = {
   signer: number;
@@ -49,5 +47,3 @@ type PartialSignatureResult = {
 };
 
 function cmp(a: number, b: number): number;
-
-export = Multisig;
